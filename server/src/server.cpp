@@ -8,7 +8,10 @@ Server::Server(){}
 Server::~Server()
 {
 
-    for (auto it = mActiveClients.begin(); it != mActiveClients.end(); ++it){}
+    for (auto it = mActiveClients.begin(); it != mActiveClients.end(); ++it)
+    {
+        
+    }
 
     close();
     mActiveClients.clear();
@@ -43,7 +46,14 @@ void Server::newClientConnected()
 
 void Server::clientStateChanged()
 {
+    QObject* signalSender = QObject::sender();
 
+    QTcpSocket* disconnectedSocket = static_cast<QTcpSocket*>(signalSender);
+
+    int socketDescriptor = disconnectedSocket->socketDescriptor();
+    mActiveClients.remove(socketDescriptor);
+
+    qDebug() << "Client with descriptor" << socketDescriptor << "disconnected";
 }
 
 void Server::recieveMessage()
